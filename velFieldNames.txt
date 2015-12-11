@@ -1,0 +1,8 @@
+sol_status
+vel_type
+latency
+age
+hor_spd
+trk_gnd
+vert_spd
+xxxx
