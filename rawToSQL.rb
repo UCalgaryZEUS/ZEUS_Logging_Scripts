@@ -8,6 +8,7 @@ necessary for use in a MYSQL DB.
 =end
 
 GPS_EPOCH = Time.new(1980,1,6,0,0,0,"-07:00")
+UNIX_EPOCH_OFFSET = 315964800 # seconds between Jan 1 1970 and Jan 6 1980
 
 # used for converting days into seconds
 class Fixnum
@@ -20,7 +21,8 @@ end
 def gpsTimetoHR(week, seconds)
     d = week * 7
     timeHR = GPS_EPOCH + d.days + seconds
-    timeHR.utc
+    # below line could potentially mess up time
+    #timeHR.utc
     puts timeHR.strftime("%c + %L")
     return timeHR
 end
@@ -49,11 +51,16 @@ velChunk = singlePair.at(1).split(",")
 gpsWeek = posChunk.at(5).to_i
 gpsSec = posChunk.at(6).to_f
 humanTime = gpsTimetoHR(gpsWeek, gpsSec)
+#puts humanTime.to_f # seconds since Unix Epoch
+#puts humanTime.to_f - 315964800 # seconds since GPS epoch 
+
 vertSpd = velChunk.at(13).to_f
 direction = velChunk.at(14).to_f #in degrees with respect to True North
 horiSpd = velChunk.at(15).to_f
+velocity = "[" + vertSpd.to_s + " " + horiSpd.to_s + " " + direction.to_s + "]"
 lat = posChunk.at(11).to_f
 long = posChunk.at(12).to_f
 altitude = posChunk.at(13).to_f
 
+puts humanTime.strftime("%Y-%m-%d %H:%M:%S.%L") + " [acceleration] " + velocity + " " + lat.to_s + " " + long.to_s + " " + altitude.to_s
 #File.open("cleanDataForSQLDB.txt", "w+") {|file| file.puts(dataForSQLDB) }
