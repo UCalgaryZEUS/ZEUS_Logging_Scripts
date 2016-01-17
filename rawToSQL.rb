@@ -56,7 +56,7 @@ cleanPairData.each do |pair|
     direction = velChunk.at(14).to_f #in degrees with respect to True North
     horiSpd = velChunk.at(15).to_f
     #velocity = "[" + vertSpd.to_s + " " + horiSpd.to_s + " " + direction.to_s + "]"
-    #puts velocity = Math.sqrt(vertSpd**2 + horiSpd**2) # Probably not accurate at all
+    velocity = Math.sqrt(vertSpd**2 + horiSpd**2) # Probably not accurate at all
     lat = posChunk.at(11).to_f
     long = posChunk.at(12).to_f
     altitude = posChunk.at(13).to_f
