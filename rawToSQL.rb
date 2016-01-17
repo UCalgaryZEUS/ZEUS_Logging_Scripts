@@ -41,26 +41,28 @@ cleanPairData = cleanPairData.flatten.each_slice(2).to_a
     b) time, acceleration [derived], velocity [derived using: vertical speed, horizontal speed, direction], lat, long, altitude
 3. Print that extracted information on a single line
 =end
-
 #Surround the below in a loop to iterate through each pair element in the array
 
-singlePair = cleanPairData.at(0).flatten.join(', ').split(", ")
-# Index 0 should be pos data, 1 should be vel
-posChunk = singlePair.at(0).split(",")
-velChunk = singlePair.at(1).split(",")
-gpsWeek = posChunk.at(5).to_i
-gpsSec = posChunk.at(6).to_f
-humanTime = gpsTimetoHR(gpsWeek, gpsSec)
-#puts humanTime.to_f # seconds since Unix Epoch
-#puts humanTime.to_f - 315964800 # seconds since GPS epoch 
+cleanPairData.each do |pair|
+    singlePair = pair.flatten.join(', ').split(", ")
+    # Index 0 should be pos data, 1 should be vel
+    posChunk = singlePair.at(0).split(",")
+    velChunk = singlePair.at(1).split(",")
+    gpsWeek = posChunk.at(5).to_i
+    gpsSec = posChunk.at(6).to_f
+    humanTime = gpsTimetoHR(gpsWeek, gpsSec)
+    #puts humanTime.to_f # seconds since Unix Epoch
+    #puts humanTime.to_f - 315964800 # seconds since GPS epoch 
 
-vertSpd = velChunk.at(13).to_f
-direction = velChunk.at(14).to_f #in degrees with respect to True North
-horiSpd = velChunk.at(15).to_f
-velocity = "[" + vertSpd.to_s + " " + horiSpd.to_s + " " + direction.to_s + "]"
-lat = posChunk.at(11).to_f
-long = posChunk.at(12).to_f
-altitude = posChunk.at(13).to_f
-
-puts humanTime.strftime("%Y-%m-%d %H:%M:%S.%L") + " [acceleration] " + velocity + " " + lat.to_s + " " + long.to_s + " " + altitude.to_s
-#File.open("cleanDataForSQLDB.txt", "w+") {|file| file.puts(dataForSQLDB) }
+    vertSpd = velChunk.at(13).to_f
+    direction = velChunk.at(14).to_f #in degrees with respect to True North
+    horiSpd = velChunk.at(15).to_f
+    #velocity = "[" + vertSpd.to_s + " " + horiSpd.to_s + " " + direction.to_s + "]"
+    puts velocity = Math.sqrt(vertSpd**2 + horiSpd**2)
+    lat = posChunk.at(11).to_f
+    long = posChunk.at(12).to_f
+    altitude = posChunk.at(13).to_f
+    dataForSQLDB = humanTime.strftime("%Y-%m-%d %H:%M:%S.%L") + " [acceleration calculation here] " + velocity.to_s + " " + lat.to_s + " " + long.to_s + " " + altitude.to_s
+    #puts dataForSQLDB
+    File.open("cleanDataForSQLDB.txt", "a+") {|file| file.puts(dataForSQLDB) }
+end
