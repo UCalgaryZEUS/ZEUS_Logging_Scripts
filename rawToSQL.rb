@@ -23,7 +23,6 @@ def gpsTimetoHR(week, seconds)
     timeHR = GPS_EPOCH + d.days + seconds
     # below line could potentially mess up time
     #timeHR.utc
-    puts timeHR.strftime("%c + %L")
     return timeHR
 end
 
@@ -41,7 +40,6 @@ cleanPairData = cleanPairData.flatten.each_slice(2).to_a
     b) time, acceleration [derived], velocity [derived using: vertical speed, horizontal speed, direction], lat, long, altitude
 3. Print that extracted information on a single line
 =end
-#Surround the below in a loop to iterate through each pair element in the array
 
 cleanPairData.each do |pair|
     singlePair = pair.flatten.join(', ').split(", ")
@@ -58,11 +56,10 @@ cleanPairData.each do |pair|
     direction = velChunk.at(14).to_f #in degrees with respect to True North
     horiSpd = velChunk.at(15).to_f
     #velocity = "[" + vertSpd.to_s + " " + horiSpd.to_s + " " + direction.to_s + "]"
-    puts velocity = Math.sqrt(vertSpd**2 + horiSpd**2)
+    puts velocity = Math.sqrt(vertSpd**2 + horiSpd**2) # Probably not accurate at all
     lat = posChunk.at(11).to_f
     long = posChunk.at(12).to_f
     altitude = posChunk.at(13).to_f
     dataForSQLDB = humanTime.strftime("%Y-%m-%d %H:%M:%S.%L") + " [acceleration calculation here] " + velocity.to_s + " " + lat.to_s + " " + long.to_s + " " + altitude.to_s
-    #puts dataForSQLDB
     File.open("cleanDataForSQLDB.txt", "a+") {|file| file.puts(dataForSQLDB) }
 end
