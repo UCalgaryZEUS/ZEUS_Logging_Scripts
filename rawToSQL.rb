@@ -11,6 +11,7 @@ GPS_EPOCH = Time.new(1980,1,6,0,0,0,"-07:00")
 UNIX_EPOCH_OFFSET = 315964800 # seconds between Jan 1 1970 and Jan 6 1980
 INITIAL_TIME = 0
 INITIAL_SPEED = 0
+FILE_NAME = Time.now.strftime("%Y-%m-%d_%H-%M-%S")
 
 
 # used for converting days into seconds
@@ -75,5 +76,5 @@ cleanPairData.each do |pair|
     long = posChunk.at(12).to_f
     altitude = posChunk.at(13).to_f
     dataForSQLDB = humanTime.strftime("%Y-%m-%d %H:%M:%S.%L") + "," + acceleration.to_s + "," + velocity.to_s + "," + lat.to_s + "," + long.to_s + "," + altitude.to_s
-    File.open("cleanDataForSQLDB.txt", "a+") {|file| file.puts(dataForSQLDB) }
+    File.open("#{FILE_NAME}.csv", "a+") {|file| file.puts(dataForSQLDB) }
 end
