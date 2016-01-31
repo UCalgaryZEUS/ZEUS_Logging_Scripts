@@ -13,18 +13,17 @@ class String
 end
 
 logFile = ARGV[0]
-posFields = []
+velFields = []
 File.read('velFieldNames.txt').each_line do |line|
-    posFields << line.chomp
+    velFields << line.chomp
 end
 logData = []
 dummyTime = 1450733657000 # Sunday Dec 27 ~3PM GMT
 File.readlines(logFile).each do |line|
     line.gsub!(/\"\"/, 'NULL')
     logData = line.chomp.split(',')
-    combined = logData.map.with_index{ |x, i| posFields.at(i) + "=" + x.quote_strings }
+    combined = logData.map.with_index{ |x, i| velFields.at(i) + "=" + x.quote_strings }
     dummyTime += 300000 # Add ~5min
     logInLP = combined.join(",").prepend("VelocityReading ") << " " + dummyTime.floor.to_s
     File.open("FieldsAdded_Vel.txt", "a+") {|file| file.puts(logInLP) }
 end
-
