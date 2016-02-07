@@ -9,8 +9,6 @@ These files are in the necessary format for InfluxDB
 GPS_EPOCH = Time.new(1980,1,6,0,0,0,"-07:00")
 UNIX_EPOCH_OFFSET = 315964800
 
-FILE_NAME = Time.now.strftime("%Y-%m-%d_%H-%M-%S")
-
 # used for converting days into seconds
 class Fixnum
     def days
@@ -68,7 +66,7 @@ cleanPosData.each do |entry|
     combined = logData.map.with_index{ |x, i| posFields.at(i) + "=" + x.quote_strings }
 
     logInLP = combined.join(",").prepend("PositionReading ") << " " + timestamp.to_i.to_s
-    File.open("/opt/ZEUS/parsed_datalogs/influx_parsed/pos_#{FILE_NAME}.txt", "a+") {|file| file.puts(logInLP) }
+    File.open("/opt/ZEUS/parsed_datalogs/influx_parsed/positionlogs.txt", "a+") {|file| file.puts(logInLP) }
 end
 
 
@@ -89,5 +87,5 @@ cleanVelData.each do |entry|
     combined = logData.map.with_index{ |x, i| velFields.at(i) + "=" + x.quote_strings }
 
     logInLP = combined.join(",").prepend("VelocityReading ") << " " + timestamp.to_i.to_s
-    File.open("/opt/ZEUS/parsed_datalogs/influx_parsed/vel_#{FILE_NAME}.txt", "a+") {|file| file.puts(logInLP) }
+    File.open("/opt/ZEUS/parsed_datalogs/influx_parsed/velocitylogs.txt", "a+") {|file| file.puts(logInLP) }
 end
