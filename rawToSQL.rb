@@ -57,7 +57,7 @@ cleanPairData.each do |pair|
     gpsSec = posChunk.at(6).to_f
     humanTime = gpsTimetoHR(gpsWeek, gpsSec)
     #puts humanTime.to_f # seconds since Unix Epoch
-    #puts humanTime.to_f - 315964800 # seconds since GPS epoch 
+    #puts humanTime.to_f - 315964800 # seconds since GPS epoch
 
     timeElapsed = gpsSec - prevTime
     prevTime = gpsSec
@@ -71,10 +71,10 @@ cleanPairData.each do |pair|
     prevVel = velocity
     velocity = velocity.round(5)
     acceleration = acceleration.round(5)
-    
+
     lat = posChunk.at(11).to_f
     long = posChunk.at(12).to_f
     altitude = posChunk.at(13).to_f
     dataForSQLDB = humanTime.strftime("%Y-%m-%d %H:%M:%S.%L") + "," + acceleration.to_s + "," + velocity.to_s + "," + lat.to_s + "," + long.to_s + "," + altitude.to_s
-    File.open("#{FILE_NAME}.csv", "a+") {|file| file.puts(dataForSQLDB) }
+    File.open("/opt/ZEUS/parsed_datalogs/sql_parsed/#{FILE_NAME}.csv", "a+") {|file| file.puts(dataForSQLDB) }
 end

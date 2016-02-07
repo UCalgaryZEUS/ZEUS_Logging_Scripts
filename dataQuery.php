@@ -16,14 +16,14 @@ class Db {
 			$config = parse_ini_file('config.ini');
 			self::$connection = new mysqli('localhost',$config['username'],$config['password'],$config['dbname']);
 			echo "connected";
-		
+
 		}
 
 		// If connection was not successful, handle the error
 		if(self::$connection === false) {
 			// Handle error - notify administrator, log to a file, show an error screen, etc.
 			echo "Connection failed";
-			
+
 			return false;
 		}
 		return self::$connection;
@@ -36,7 +36,7 @@ class Db {
 	 * @return mixed The result of the mysqli::query() function
 	 */
 	public function query($query) {
-		
+
 	//	echo "Here in qurey";
 	//	echo $query;
 		// Connect to the database
@@ -44,26 +44,26 @@ class Db {
 
 		// Query the database
 		$result = $connection -> query($query);
-		
+
 		if (!$result) {
-      
+
       echo "Error in query";
-		echo "<br>";      
+		echo "<br>";
       echo $query."<br>";
-      
+
        $message  = 'Invalid query: ' . $connection->error. "\n";
-    	 
+
     	 $message .= 'Whole query: ' . $query;
-      
+
         die('Invalid query: ' . mysqli_error($connection));
-			
-			
+
+
 			}
 
-		
-		
-		
-		
+
+
+
+
 		return $result;
 	}
 
@@ -83,7 +83,7 @@ class Db {
 		while ($row = $result -> fetch_assoc()) {
 			$rows[] = $row;
 			echo $row;
-			
+
 		}
 		return $rows;
 	}
@@ -105,9 +105,9 @@ class Db {
 	 * @return string The quoted and escaped string
 	 */
 	public function quote($value) {
-		
+
 		echo "in quute";
-		
+
 		$connection = $this -> connect();
 		return "'" . $connection -> real_escape_string($value) . "'";
 	}
