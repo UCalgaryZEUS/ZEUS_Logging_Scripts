@@ -10,7 +10,7 @@ $formatStr = "Y-m-d H:i:s";
 
 $unixTime = time();
 
-$date = new DateTime("@unixTime");
+$date = new DateTime("@$unixTime");
 
 $date = $date->format($formatStr);
 
