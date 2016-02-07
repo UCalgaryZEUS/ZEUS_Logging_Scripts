@@ -32,12 +32,12 @@ class String
 end
 
 posFields = []
-File.read('posFieldNames.txt').each_line do |line|
+File.read('/opt/ZEUS/logger_scripts/posFieldNames.txt').each_line do |line|
     posFields << line.chomp
 end
 
 velFields = []
-File.read('velFieldNames.txt').each_line do |line|
+File.read('/opt/ZEUS/logger_scripts/velFieldNames.txt').each_line do |line|
     velFields << line.chomp
 end
 
