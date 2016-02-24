@@ -36,12 +36,16 @@ dirtyData = File.read(dirtyFile)
 cleanPairData = dirtyData.scan(/(#BESTVELA.*SOL_COMPUTED.*$|#BESTPOSA.*SOL_COMPUTED.*$)/)
 cleanPairData = cleanPairData.flatten.each_slice(2).to_a
 
+#Sanitize the data: Remove "pairs" that are only a single pos or vel reading
+cleanPairData.delete_if { |a| a.count == 1 }
+
 =begin
 1. Take valid reading pairs
 2. Extract the following:
-    a) "timestamp" grabbed either from pos or vel reading, both should have the same time if they
-    are a proper pair
-    b) time, acceleration [derived], velocity [derived using: vertical speed, horizontal speed, direction], lat, long, altitude
+    a) "timestamp" grabbed either from pos or vel reading,
+    both should have the same time if they are a proper pair
+    b) time, acceleration [derived], velocity [derived using: vertical speed,
+    horizontal speed, direction], lat, long, altitude
 3. Print that extracted information on a single line
 =end
 
@@ -76,5 +80,5 @@ cleanPairData.each do |pair|
     long = posChunk.at(12).to_f
     altitude = posChunk.at(13).to_f
     dataForSQLDB = humanTime.strftime("%Y-%m-%d %H:%M:%S.%L") + "," + acceleration.to_s + "," + velocity.to_s + "," + lat.to_s + "," + long.to_s + "," + altitude.to_s
-    File.open("/opt/ZEUS/parsed_datalogs/sql_parsed/#{FILE_NAME}.csv", "a+") {|file| file.puts(dataForSQLDB) }
+    #File.open("/opt/ZEUS/parsed_datalogs/sql_parsed/#{FILE_NAME}.csv", "a+") {|file| file.puts(dataForSQLDB) }
 end
