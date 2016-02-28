@@ -33,8 +33,15 @@ end
 
 dirtyFile = ARGV[0]
 dirtyData = File.read(dirtyFile)
-cleanPairData = dirtyData.scan(/(#BESTVELA.*SOL_COMPUTED.*$|#BESTPOSA.*SOL_COMPUTED.*$)/)
-cleanPairData = cleanPairData.flatten.each_slice(2).to_a
+cleanPairData = dirtyData.scan(/(#BESTPOSA.*SOL_COMPUTED.*$|#BESTVELA.*SOL_COMPUTED.*$|#BESTXYZA.*SOL_COMPUTED.*$)/)
+
+=begin rough work for robust error-checking/ordering
+puts cleanPairData.to_s
+puts cleanPairData.at(0).to_s
+cleanPairData.at(1).grep(/.*BESTVELA.*/) { |match| puts true }
+=end
+
+cleanPairData = cleanPairData.flatten.each_slice(3).to_a
 
 #Sanitize the data: Remove "pairs" that are only a single pos or vel reading
 cleanPairData.delete_if { |a| a.count == 1 }
@@ -54,9 +61,12 @@ prevVel = INITIAL_SPEED
 
 cleanPairData.each do |pair|
     singlePair = pair.flatten.join(', ').split(", ")
-    # Index 0 should be pos data, 1 should be vel
+    # Index 0 should be pos data, 1 should be vel, 2 should be xyz
     posChunk = singlePair.at(0).split(",")
     velChunk = singlePair.at(1).split(",")
+    xyzChunk = singlePair.at(2).split(",")
+    # Shouldn't matter whether the time is taken from pos/vel/xyz, provided the
+    # grouping logic is sufficient (This is a WIP - TODO)
     gpsWeek = posChunk.at(5).to_i
     gpsSec = posChunk.at(6).to_f
     humanTime = gpsTimetoHR(gpsWeek, gpsSec)
@@ -79,6 +89,8 @@ cleanPairData.each do |pair|
     lat = posChunk.at(11).to_f
     long = posChunk.at(12).to_f
     altitude = posChunk.at(13).to_f
+    #TODO: Determine what information to extract from XYZ logs
+
     dataForSQLDB = humanTime.strftime("%Y-%m-%d %H:%M:%S.%L") + "," + acceleration.to_s + "," + velocity.to_s + "," + lat.to_s + "," + long.to_s + "," + altitude.to_s
-    #File.open("/opt/ZEUS/parsed_datalogs/sql_parsed/#{FILE_NAME}.csv", "a+") {|file| file.puts(dataForSQLDB) }
+    File.open("/opt/ZEUS/parsed_datalogs/sql_parsed/#{FILE_NAME}.csv", "a+") {|file| file.puts(dataForSQLDB) }
 end

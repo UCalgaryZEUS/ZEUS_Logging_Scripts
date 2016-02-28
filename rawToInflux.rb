@@ -41,10 +41,16 @@ File.read('/opt/ZEUS/logger_scripts/velFieldNames.txt').each_line do |line|
     velFields << line.chomp
 end
 
+xyzFields = []
+File.read('/opt/ZEUS/logger_scripts/xyzFieldNames.txt').each_line do |line|
+    xyzFields << line.chomp
+end
+
 dirtyFile = ARGV[0]
 dirtyData = File.read(dirtyFile)
 cleanPosData = dirtyData.scan(/(^.*#BESTPOSA.*SOL_COMPUTED.*$)/)
 cleanVelData = dirtyData.scan(/(^.*#BESTVELA.*SOL_COMPUTED.*$)/)
+cleanXYZData = dirtyData.scan(/(^.*#BESTXYZA.*SOL_COMPUTED.*$)/)
 
 # Could remove the header later on by splitting the array entries by a ';'
 # Need the header initially in order to extract the timestamp for the log
@@ -88,4 +94,26 @@ cleanVelData.each do |entry|
 
     logInLP = combined.join(",").prepend("VelocityReading ") << " " + timestamp.to_i.to_s
     File.open("/opt/ZEUS/parsed_datalogs/influx_parsed/velocitylogs.txt", "a+") {|file| file.puts(logInLP) }
+end
+
+
+# Loop for xyz data
+xyzLogData = []
+cleanXYZData.each do |entry|
+    # Perform timestamp extraction before removing header
+    log = entry.join(",").split(';')
+    # log[0] is the header, log[1] is the data
+    header = log.at(0).split(',')
+    gpsWeek = header.at(5).to_i
+    gpsSec = header.at(6).to_f
+    humanTime = gpsTimetoHR(gpsWeek, gpsSec)
+    timestamp = humanTime.to_f * 1000 # milliseconds since Unix Epoch
+
+    log.at(1).gsub!(/\"\"/, 'NULL')
+    logData = log.at(1).chomp.split(',')
+    combined = logData.map.with_index{ |x, i| xyzFields.at(i) + "=" + x.quote_strings }
+
+    logInLP = combined.join(",").prepend("XYZReading ") << " " + timestamp.to_i.to_s
+    puts logInLP
+    File.open("/opt/ZEUS/parsed_datalogs/influx_parsed/xyzlogs.txt", "a+") {|file| file.puts(logInLP) }
 end
