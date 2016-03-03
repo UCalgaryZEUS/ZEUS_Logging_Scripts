@@ -1,9 +1,24 @@
 class EccToEnu
-  def initialize(*args)
+  def initialize()
     float @heading = 0.0
-    Matrix @
+    Matrix.column_vector([0.0,0.0,0.0]) @enuCoards
+    Matrix.column_vector([0.0,0.0,0.0]) @eecFcoards
+    
+    
+    def convertVector(x,y,z)
+    
+    
+    
+    
+    end
 
-
+    def angleVectorGen 
+    
+    
+    
+    
+    
+    end
 
 
   end
