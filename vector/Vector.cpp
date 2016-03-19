@@ -14,6 +14,17 @@ using namespace boost::algorithm;
 
 typedef std::vector<std::string> ArrayData;
 
+struct refPos{
+
+double lamda = 0;
+double phi = 0;
+
+
+};
+
+
+
+
 int main (int argc,char** argv){
 
 
@@ -23,9 +34,15 @@ std::vector<std::string> data;
 matrix<double> transForm (3, 3); //Creates a 3x3 matrix
 
 
+refPos* refP = new refPos;
+
 float x_vect;
 float y_vect;
 float z_vect;
+
+
+	refPos-> lamda = REFLONG;
+	refPos-> phi = REFLAT;
 
 
 
