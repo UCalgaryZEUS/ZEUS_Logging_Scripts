@@ -106,17 +106,17 @@ int main (int argc,char** argv){
 
 	
 		try{
-		matrix.at(1,1) = -1 * (std::sin (REFLONG));
-		matrix.at(2,1) = (std::cos( REFLONG ));
-		matrix.at(3,1) = 0;
+		matrix.at(1,1) = -1 * (sin (REFLONG));
+		matrix.at(2,1) = -1 *(cos(REFLONG) * sin(REFLAT));
+		matrix.at(3,1) = (cos(REFLONG)*cos(REFLAT));
 
-		matrix.at(1,2) = -(std::cos( REFLONG )* std::sin(REFLAT));
-		matrix.at(2,2) = -(std::sin( REFLONG )  * std::sin(REFLAT) );
-		matrix.at(3,2) = (std::cos(REFLAT));
+		matrix.at(1,2) = -(std::cos( REFLONG ));
+		matrix.at(2,2) = -1 * (std::sin( REFLONG )  * std::sin(REFLAT) );
+		matrix.at(3,2) =  (sin(REFLONG))*(std::cos(REFLAT));
 
-		matrix.at(1,3) = (std::cos( REFLONG ) * std::cos(REFLAT));
-		matrix.at(2,3) = (std::sin( REFLONG )*  std::cos(REFLAT));
-		matrix.at(3,3) = std::sin(REFLAT);
+		matrix.at(1,3) = 0;
+		matrix.at(2,3) =   std::cos(REFLAT);
+		matrix.at(3,3) =  std::sin(REFLAT);
 		
 		}catch(const std::logic_error& ex){
 			std::cout << "Out of bounds" << std::endl;
