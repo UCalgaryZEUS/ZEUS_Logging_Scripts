@@ -55,65 +55,27 @@ cleanXYZData = dirtyData.scan(/(^.*#BESTXYZA.*SOL_COMPUTED.*$)/)
 # Could remove the header later on by splitting the array entries by a ';'
 # Need the header initially in order to extract the timestamp for the log
 
-# Loop for position data
-posLogData = []
-cleanPosData.each do |entry|
-    # Perform timestamp extraction before removing header
-    log = entry.join(",").split(';')
-    # log[0] is the header, log[1] is the data
-    header = log.at(0).split(',')
-    gpsWeek = header.at(5).to_i
-    gpsSec = header.at(6).to_f
-    humanTime = gpsTimetoHR(gpsWeek, gpsSec)
-    timestamp = humanTime.to_f * 1000 # milliseconds since Unix Epoch
+def extractData(cleanData, fields, readingName, type)
+  logData = []
+  cleanData.each do |entry|
+      # Perform timestamp extraction before removing header
+      log = entry.join(",").split(';')
+      # log[0] is the header, log[1] is the data
+      header = log.at(0).split(',')
+      gpsWeek = header.at(5).to_i
+      gpsSec = header.at(6).to_f
+      humanTime = gpsTimetoHR(gpsWeek, gpsSec)
+      timestamp = humanTime.to_f * 1000 # milliseconds since Unix Epoch
 
-    log.at(1).gsub!(/\"\"/, 'NULL')
-    logData = log.at(1).chomp.split(',')
-    combined = logData.map.with_index{ |x, i| posFields.at(i) + "=" + x.quote_strings }
+      log.at(1).gsub!(/\"\"/, 'NULL')
+      logData = log.at(1).chomp.split(',')
+      combined = logData.map.with_index{ |x, i| fields.at(i) + "=" + x.quote_strings }
 
-    logInLP = combined.join(",").prepend("PositionReading ") << " " + timestamp.to_i.to_s
-    File.open("/opt/ZEUS/parsed_datalogs/influx_parsed/positionlogs.txt", "a+") {|file| file.puts(logInLP) }
+      logInLP = combined.join(",").prepend(readingName) << " " + timestamp.to_i.to_s
+      File.open("/opt/ZEUS/parsed_datalogs/influx_parsed/"+ type +"logs.txt", "a+") {|file| file.puts(logInLP) }
+  end
 end
 
-
-#Loop for velocity data
-velLogData = []
-cleanVelData.each do |entry|
-    # Perform timestamp extraction before removing header
-    log = entry.join(",").split(';')
-    # log[0] is the header, log[1] is the data
-    header = log.at(0).split(',')
-    gpsWeek = header.at(5).to_i
-    gpsSec = header.at(6).to_f
-    humanTime = gpsTimetoHR(gpsWeek, gpsSec)
-    timestamp = humanTime.to_f * 1000 # milliseconds since Unix Epoch
-
-    log.at(1).gsub!(/\"\"/, 'NULL')
-    logData = log.at(1).chomp.split(',')
-    combined = logData.map.with_index{ |x, i| velFields.at(i) + "=" + x.quote_strings }
-
-    logInLP = combined.join(",").prepend("VelocityReading ") << " " + timestamp.to_i.to_s
-    File.open("/opt/ZEUS/parsed_datalogs/influx_parsed/velocitylogs.txt", "a+") {|file| file.puts(logInLP) }
-end
-
-
-# Loop for xyz data
-xyzLogData = []
-cleanXYZData.each do |entry|
-    # Perform timestamp extraction before removing header
-    log = entry.join(",").split(';')
-    # log[0] is the header, log[1] is the data
-    header = log.at(0).split(',')
-    gpsWeek = header.at(5).to_i
-    gpsSec = header.at(6).to_f
-    humanTime = gpsTimetoHR(gpsWeek, gpsSec)
-    timestamp = humanTime.to_f * 1000 # milliseconds since Unix Epoch
-
-    log.at(1).gsub!(/\"\"/, 'NULL')
-    logData = log.at(1).chomp.split(',')
-    combined = logData.map.with_index{ |x, i| xyzFields.at(i) + "=" + x.quote_strings }
-
-    logInLP = combined.join(",").prepend("XYZReading ") << " " + timestamp.to_i.to_s
-    puts logInLP
-    File.open("/opt/ZEUS/parsed_datalogs/influx_parsed/xyzlogs.txt", "a+") {|file| file.puts(logInLP) }
-end
+extractData(cleanPosData, posFields, "PositionReading", "position")
+extractData(cleanVelData, velFields, "VelocityReading", "velocity")
+extractData(cleanXYZData, xyzFields, "XYZReading", "xyz")
