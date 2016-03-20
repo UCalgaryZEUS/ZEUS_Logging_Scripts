@@ -110,7 +110,7 @@ int main (int argc,char** argv){
 		matrix.at(2,1) = -1 *(cos(REFLONG) * sin(REFLAT));
 		matrix.at(3,1) = (cos(REFLONG)*cos(REFLAT));
 
-		matrix.at(1,2) = -(std::cos( REFLONG ));
+		matrix.at(1,2) = -1* (std::cos( REFLONG ));
 		matrix.at(2,2) = -1 * (std::sin( REFLONG )  * std::sin(REFLAT) );
 		matrix.at(3,2) =  (sin(REFLONG))*(std::cos(REFLAT));
 
